@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valuation Pro AI - Análise Inteligente com IA</title>
+    <title>Valuation Pro AI - Análise Completa com Dados Históricos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -19,23 +19,21 @@
         .hidden-section { display: none; }
         .visible-section { display: block; animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Chat Interface */
         .chat-container { height: 500px; overflow-y: auto; scroll-behavior: smooth; }
         .chat-message { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         .typing-indicator::after { content: '...'; animation: dots 1.5s steps(4, end) infinite; }
         @keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
-        
         .insight-card { transition: all 0.3s; border-left: 3px solid transparent; }
         .insight-card:hover { transform: translateX(5px); border-left-color: #667eea; }
         .risk-high { border-left-color: #ef4444 !important; background: rgba(239, 68, 68, 0.1); }
         .risk-medium { border-left-color: #f59e0b !important; background: rgba(245, 158, 11, 0.1); }
         .risk-low { border-left-color: #10b981 !important; background: rgba(16, 185, 129, 0.1); }
-        
         .pulse-ring { position: relative; }
         .pulse-ring::before { content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; border-radius: 50%; border: 2px solid #10b981; animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
         @keyframes pulse-ring { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } }
+        .tab-active { border-bottom: 2px solid #667eea; color: #667eea; }
+        .year-header { background: rgba(102, 126, 234, 0.1); font-weight: 600; }
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
@@ -44,11 +42,11 @@
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-xl">
-                    <i class="fas fa-brain"></i>
+                    <i class="fas fa-chart-line"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold gradient-text">Valuation Pro AI</h1>
-                    <p class="text-xs text-slate-400">Powered by GPT-4</p>
+                    <p class="text-xs text-slate-400">FCF Completo com Projeções Variáveis</p>
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -69,18 +67,14 @@
     <div id="aiConfigModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center">
         <div class="glass rounded-2xl p-8 max-w-md w-full mx-4 border border-slate-700">
             <h3 class="text-2xl font-bold mb-4 gradient-text">Configurar Integração com IA</h3>
-            
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium mb-2 text-slate-300">Provedor de IA</label>
                     <select id="aiProvider" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500" onchange="updateAIFields()">
                         <option value="openai">OpenAI (ChatGPT) - Recomendado</option>
                         <option value="anthropic">Anthropic (Claude)</option>
-                        <option value="grok">xAI (Grok) - Em breve</option>
-                        <option value="local">Modelo Local (Ollama)</option>
                     </select>
                 </div>
-
                 <div id="apiKeyContainer">
                     <label class="block text-sm font-medium mb-2 text-slate-300">API Key</label>
                     <div class="relative">
@@ -89,18 +83,15 @@
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Sua chave fica apenas no seu navegador, não é enviada para nossos servidores.</p>
+                    <p class="text-xs text-slate-500 mt-1">Sua chave fica apenas no seu navegador.</p>
                 </div>
-
                 <div id="modelContainer">
                     <label class="block text-sm font-medium mb-2 text-slate-300">Modelo</label>
                     <select id="aiModel" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500">
                         <option value="gpt-4">GPT-4 (Mais inteligente)</option>
-                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Mais rápido/barato)</option>
-                        <option value="gpt-4-turbo-preview">GPT-4 Turbo (Novo)</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Mais rápido)</option>
                     </select>
                 </div>
-
                 <div class="p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                     <h4 class="text-blue-400 font-semibold mb-2 text-sm">Como obter sua API Key:</h4>
                     <ol class="text-xs text-slate-400 space-y-1 list-decimal list-inside" id="apiInstructions">
@@ -108,17 +99,12 @@
                         <li>Crie uma conta ou faça login</li>
                         <li>Vá em "API Keys" no menu lateral</li>
                         <li>Clique em "Create new secret key"</li>
-                        <li>Copie e cole aqui (custo ~$0.01-0.03 por análise)</li>
+                        <li>Copie e cole aqui</li>
                     </ol>
                 </div>
-
                 <div class="flex gap-3 mt-6">
-                    <button onclick="closeAIConfig()" class="flex-1 border border-slate-600 hover:bg-slate-800 text-white font-semibold py-3 rounded-lg transition-all">
-                        Cancelar
-                    </button>
-                    <button onclick="saveAIConfig()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition-all">
-                        Salvar e Conectar
-                    </button>
+                    <button onclick="closeAIConfig()" class="flex-1 border border-slate-600 hover:bg-slate-800 text-white font-semibold py-3 rounded-lg transition-all">Cancelar</button>
+                    <button onclick="saveAIConfig()" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition-all">Salvar e Conectar</button>
                 </div>
             </div>
         </div>
@@ -134,17 +120,19 @@
         
         <!-- Step Indicator -->
         <div class="flex justify-between mb-8 text-sm overflow-x-auto">
-            <div id="step1-indicator" class="step-active px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">1. Dados</div>
-            <div id="step2-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">2. Projeções</div>
-            <div id="step3-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">3. WACC</div>
-            <div id="step4-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">4. Resultado</div>
-            <div id="step5-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">5. Análise IA</div>
+            <div id="step1-indicator" class="step-active px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">1. Identificação</div>
+            <div id="step2-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">2. Dados Históricos (3 anos)</div>
+            <div id="step3-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">3. Projeções (5 anos)</div>
+            <div id="step4-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">4. WACC</div>
+            <div id="step5-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">5. Resultado</div>
+            <div id="step6-indicator" class="px-4 py-2 rounded-lg border border-slate-600 transition-all whitespace-nowrap">6. Análise IA</div>
         </div>
 
-        <!-- STEP 1: Company Data -->
+        <!-- STEP 1: Company Identification -->
         <section id="step1" class="visible-section">
             <div class="glass rounded-2xl p-8 mb-6">
-                <h2 class="text-3xl font-bold mb-6 gradient-text">Dados da Empresa</h2>
+                <h2 class="text-3xl font-bold mb-6 gradient-text">Identificação da Empresa</h2>
+                <p class="text-slate-400 mb-6">Vamos identificar o negócio para buscar referências de mercado quando necessário.</p>
                 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
@@ -152,21 +140,33 @@
                         <input type="text" id="companyName" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500" placeholder="Ex: Tech Solutions Ltda">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-slate-300">Setor</label>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">Setor de Atuação</label>
                         <select id="sector" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500">
-                            <option value="">Selecione...</option>
-                            <option value="tecnologia">Tecnologia / SaaS</option>
-                            <option value="varejo">Varejo / E-commerce</option>
+                            <option value="">Selecione o setor...</option>
+                            <option value="tecnologia">Tecnologia / Software</option>
+                            <option value="varejo">Varejo / Comércio</option>
                             <option value="industria">Indústria / Manufatura</option>
                             <option value="servicos">Serviços / Consultoria</option>
-                            <option value="saude">Saúde / Biotech</option>
-                            <option value="financeiro">Fintech / Banco</option>
-                            <option value="energia">Energia / Sustentabilidade</option>
-                            <option value="alimentos">Food / Bev / Agronegócio</option>
-                            <option value="construcao">Construção / Imobiliário</option>
-                            <option value="educacao">Educação / EdTech</option>
+                            <option value="saude">Saúde / Farmacêutico</option>
+                            <option value="financeiro">Serviços Financeiros</option>
+                            <option value="energia">Energia / Utilidades</option>
+                            <option value="alimentos">Alimentos e Bebidas</option>
+                            <option value="construcao">Construção Civil</option>
                             <option value="logistica">Logística / Transporte</option>
-                            <option value="outro">Outro / Diverso</option>
+                            <option value="educacao">Educação / EdTech</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">Ano Base (último ano histórico)</label>
+                        <input type="number" id="baseYear" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500" value="2023" min="2020" max="2025">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">Moeda</label>
+                        <select id="currency" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500">
+                            <option value="BRL">R$ (Real)</option>
+                            <option value="USD">US$ (Dólar)</option>
+                            <option value="EUR">€ (Euro)</option>
                         </select>
                     </div>
                 </div>
@@ -179,156 +179,511 @@
             </div>
         </section>
 
-        <!-- STEP 2: Historical & Projections -->
+        <!-- STEP 2: Historical Data (3 Years) -->
         <section id="step2" class="hidden-section">
             <div class="glass rounded-2xl p-8 mb-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold gradient-text">Dados Financeiros</h2>
-                    <button onclick="autoFillData()" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors border border-slate-700">
-                        <i class="fas fa-magic mr-2"></i>Preencher com IA (Simulação)
+                    <h2 class="text-3xl font-bold gradient-text">Dados Históricos (3 anos)</h2>
+                    <button onclick="autoFillHistorical()" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors border border-slate-700">
+                        <i class="fas fa-magic mr-2"></i>Preencher com Referências do Setor
                     </button>
                 </div>
                 
-                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-600">
+                                <th class="py-4 px-2 text-slate-400 w-1/4">Indicador</th>
+                                <th class="py-4 px-2 text-slate-400 text-center year-header" id="histYear1">2021</th>
+                                <th class="py-4 px-2 text-slate-400 text-center year-header" id="histYear2">2022</th>
+                                <th class="py-4 px-2 text-slate-400 text-center year-header" id="histYear3">2023</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mono text-sm">
+                            <tr class="border-b border-slate-700/50">
+                                <td class="py-3 px-2 text-slate-300">Receita Líquida</td>
+                                <td class="py-3 px-2"><input type="number" id="rev1" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                                <td class="py-3 px-2"><input type="number" id="rev2" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                                <td class="py-3 px-2"><input type="number" id="rev3" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50">
+                                <td class="py-3 px-2 text-slate-300">(-) Custos Operacionais</td>
+                                <td class="py-3 px-2"><input type="number" id="cost1" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                                <td class="py-3 px-2"><input type="number" id="cost2" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                                <td class="py-3 px-2"><input type="number" id="cost3" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50 bg-slate-800/30">
+                                <td class="py-3 px-2 text-green-400 font-semibold">= EBITDA</td>
+                                <td class="py-3 px-2 text-right text-green-400" id="ebitda1">-</td>
+                                <td class="py-3 px-2 text-right text-green-400" id="ebitda2">-</td>
+                                <td class="py-3 px-2 text-right text-green-400" id="ebitda3">-</td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50">
+                                <td class="py-3 px-2 text-slate-300">(-) Depreciação/Amortização</td>
+                                <td class="py-3 px-2"><input type="number" id="dep1" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                                <td class="py-3 px-2"><input type="number" id="dep2" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                                <td class="py-3 px-2"><input type="number" id="dep3" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01" onchange="calculateHistorical()"></td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50 bg-slate-800/30">
+                                <td class="py-3 px-2 text-blue-400 font-semibold">= EBIT</td>
+                                <td class="py-3 px-2 text-right text-blue-400" id="ebit1">-</td>
+                                <td class="py-3 px-2 text-right text-blue-400" id="ebit2">-</td>
+                                <td class="py-3 px-2 text-right text-blue-400" id="ebit3">-</td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50">
+                                <td class="py-3 px-2 text-slate-300">(-) Imposto de Renda (IR)</td>
+                                <td class="py-3 px-2"><input type="number" id="tax1" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                                <td class="py-3 px-2"><input type="number" id="tax2" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                                <td class="py-3 px-2"><input type="number" id="tax3" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50">
+                                <td class="py-3 px-2 text-slate-300">(+/-) Variação NCG</td>
+                                <td class="py-3 px-2"><input type="number" id="ncg1" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                                <td class="py-3 px-2"><input type="number" id="ncg2" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                                <td class="py-3 px-2"><input type="number" id="ncg3" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50">
+                                <td class="py-3 px-2 text-slate-300">(-) CAPEX (Investimentos)</td>
+                                <td class="py-3 px-2"><input type="number" id="capex1" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                                <td class="py-3 px-2"><input type="number" id="capex2" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                                <td class="py-3 px-2"><input type="number" id="capex3" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-right" placeholder="0,00" step="0.01"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Historical Metrics -->
+                <div class="grid md:grid-cols-3 gap-4 mt-6">
                     <div class="glass p-4 rounded-xl border border-slate-800">
-                        <label class="block text-xs font-medium mb-1 text-slate-400">Receita Ano Atual (R$)</label>
-                        <input type="number" id="currentRevenue" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0,00" step="0.01">
+                        <h4 class="text-slate-400 text-xs mb-1">CAGR Receita (3 anos)</h4>
+                        <p class="text-2xl font-bold text-blue-400 mono" id="cagrRevenue">-</p>
                     </div>
                     <div class="glass p-4 rounded-xl border border-slate-800">
-                        <label class="block text-xs font-medium mb-1 text-slate-400">Margem EBITDA (%)</label>
-                        <input type="number" id="currentMargin" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0,00" step="0.01">
+                        <h4 class="text-slate-400 text-xs mb-1">Margem EBITDA Média</h4>
+                        <p class="text-2xl font-bold text-green-400 mono" id="avgEbitdaMargin">-</p>
                     </div>
                     <div class="glass p-4 rounded-xl border border-slate-800">
-                        <label class="block text-xs font-medium mb-1 text-slate-400">Crescimento Esperado (% ao ano)</label>
-                        <input type="number" id="growthRate" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0,00" step="0.01">
+                        <h4 class="text-slate-400 text-xs mb-1">Taxa de Investimento (CAPEX/Rev)</h4>
+                        <p class="text-2xl font-bold text-purple-400 mono" id="avgCapexRate">-</p>
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="glass p-4 rounded-xl border border-slate-800">
-                        <label class="block text-xs font-medium mb-1 text-slate-400">Investimento em CAPEX (% Receita)</label>
-                        <input type="number" id="capexRate" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="5-15%" step="0.01">
-                    </div>
-                    <div class="glass p-4 rounded-xl border border-slate-800">
-                        <label class="block text-xs font-medium mb-1 text-slate-400">Necessidade de Capital de Giro (% Receita)</label>
-                        <input type="number" id="ncgRate" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="10-20%" step="0.01">
-                    </div>
+                <div class="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                    <h4 class="text-blue-400 font-semibold mb-2 text-sm">💡 Dicas:</h4>
+                    <ul class="text-xs text-slate-400 space-y-1">
+                        <li>• <strong>NCG</strong> = (Contas a Receber + Estoques) - (Fornecedores + Obrigações)</li>
+                        <li>• <strong>Variação NCG</strong> = NCG deste ano - NCG do ano anterior</li>
+                        <li>• Se NCG aumentou, é uso de caixa (sinal negativo no FCF)</li>
+                    </ul>
                 </div>
 
                 <div class="mt-8 flex justify-between">
                     <button onclick="prevStep(1)" class="border border-slate-600 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-lg transition-all">
                         <i class="fas fa-arrow-left mr-2"></i>Voltar
                     </button>
-                    <button onclick="nextStep(3)" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105">
-                        Próximo <i class="fas fa-arrow-right ml-2"></i>
+                    <button onclick="calculateHistorical(); nextStep(3)" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105">
+                        Próximo: Projeções <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- STEP 3: WACC -->
+        <!-- STEP 3: Projections (5 Years) - VARIABLE GROWTH -->
         <section id="step3" class="hidden-section">
             <div class="glass rounded-2xl p-8 mb-6">
-                <h2 class="text-3xl font-bold mb-6 gradient-text">Custo de Capital (WACC)</h2>
-                
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-blue-400">Capital Próprio</h3>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-slate-300">Taxa Livre de Risco (%)</label>
-                            <input type="number" id="rf" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="11.75" step="0.01">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-slate-300">Prêmio de Risco (%)</label>
-                            <input type="number" id="rpm" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="6.0" step="0.01">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-slate-300">Beta</label>
-                            <input type="number" id="beta" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="1.0" step="0.01">
-                        </div>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold gradient-text">Projeções (5 anos) - Crescimento Variável</h2>
+                    <div class="flex gap-2">
+                        <button onclick="suggestProjections('conservative')" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors border border-slate-700">
+                            <i class="fas fa-shield-alt mr-2"></i>Cenário Conservador
+                        </button>
+                        <button onclick="suggestProjections('base')" class="text-sm bg-blue-800/30 hover:bg-blue-700/30 text-blue-400 px-4 py-2 rounded-lg transition-colors border border-blue-500/30">
+                            <i class="fas fa-chart-line mr-2"></i>Cenário Base
+                        </button>
+                        <button onclick="suggestProjections('optimistic')" class="text-sm bg-green-800/30 hover:bg-green-700/30 text-green-400 px-4 py-2 rounded-lg transition-colors border border-green-500/30">
+                            <i class="fas fa-rocket mr-2"></i>Cenário Otimista
+                        </button>
                     </div>
+                </div>
 
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-purple-400">Capital de Terceiros</h3>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-slate-300">Custo da Dívida (%)</label>
-                            <input type="number" id="kd" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="12.0" step="0.01">
+                <!-- Tabs for each year -->
+                <div class="flex border-b border-slate-700 mb-6">
+                    <button onclick="showProjectionYear(1)" id="tab-year-1" class="tab-active px-6 py-3 text-sm font-medium transition-colors">Ano 1</button>
+                    <button onclick="showProjectionYear(2)" id="tab-year-2" class="px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">Ano 2</button>
+                    <button onclick="showProjectionYear(3)" id="tab-year-3" class="px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">Ano 3</button>
+                    <button onclick="showProjectionYear(4)" id="tab-year-4" class="px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">Ano 4</button>
+                    <button onclick="showProjectionYear(5)" id="tab-year-5" class="px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">Ano 5</button>
+                </div>
+
+                <!-- Projection Forms for each year -->
+                <div id="projection-year-1" class="projection-form">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Crescimento Receita (%)</label>
+                            <input type="number" id="growth1" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-slate-300">Participação da Dívida (%)</label>
-                            <input type="number" id="debtWeight" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="30" step="0.01">
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Margem EBITDA (%)</label>
+                            <input type="number" id="margin1" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-slate-300">Crescimento Perpétuo (%)</label>
-                            <input type="number" id="growthPerp" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="3.0" step="0.01">
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Depreciação (% Receita)</label>
+                            <input type="number" id="depRate1" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="5.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">NCG (% Receita)</label>
+                            <input type="number" id="ncgRate1" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="15.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">CAPEX (% Receita)</label>
+                            <input type="number" id="capexRate1" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="8.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Alíquota IR (%)</label>
+                            <input type="number" id="taxRate1" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" value="34" step="0.01">
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-6 p-4 bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-xl border border-slate-700">
-                    <div class="flex justify-between items-center">
-                        <span class="text-lg text-slate-300">WACC Calculado:</span>
-                        <span class="text-3xl font-bold gradient-text mono" id="waccDisplay">-</span>
+                <div id="projection-year-2" class="projection-form hidden">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Crescimento Receita (%)</label>
+                            <input type="number" id="growth2" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Margem EBITDA (%)</label>
+                            <input type="number" id="margin2" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Depreciação (% Receita)</label>
+                            <input type="number" id="depRate2" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="5.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">NCG (% Receita)</label>
+                            <input type="number" id="ncgRate2" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="15.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">CAPEX (% Receita)</label>
+                            <input type="number" id="capexRate2" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="8.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Alíquota IR (%)</label>
+                            <input type="number" id="taxRate2" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" value="34" step="0.01">
+                        </div>
                     </div>
+                </div>
+
+                <div id="projection-year-3" class="projection-form hidden">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Crescimento Receita (%)</label>
+                            <input type="number" id="growth3" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Margem EBITDA (%)</label>
+                            <input type="number" id="margin3" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Depreciação (% Receita)</label>
+                            <input type="number" id="depRate3" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="5.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">NCG (% Receita)</label>
+                            <input type="number" id="ncgRate3" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="15.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">CAPEX (% Receita)</label>
+                            <input type="number" id="capexRate3" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="8.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Alíquota IR (%)</label>
+                            <input type="number" id="taxRate3" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" value="34" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="projection-year-4" class="projection-form hidden">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Crescimento Receita (%)</label>
+                            <input type="number" id="growth4" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Margem EBITDA (%)</label>
+                            <input type="number" id="margin4" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Depreciação (% Receita)</label>
+                            <input type="number" id="depRate4" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="5.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">NCG (% Receita)</label>
+                            <input type="number" id="ncgRate4" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="15.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">CAPEX (% Receita)</label>
+                            <input type="number" id="capexRate4" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="8.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Alíquota IR (%)</label>
+                            <input type="number" id="taxRate4" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" value="34" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="projection-year-5" class="projection-form hidden">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Crescimento Receita (%)</label>
+                            <input type="number" id="growth5" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Margem EBITDA (%)</label>
+                            <input type="number" id="margin5" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono text-lg" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Depreciação (% Receita)</label>
+                            <input type="number" id="depRate5" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="5.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">NCG (% Receita)</label>
+                            <input type="number" id="ncgRate5" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="15.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">CAPEX (% Receita)</label>
+                            <input type="number" id="capexRate5" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" placeholder="8.00" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-xl border border-slate-800">
+                            <label class="block text-xs font-medium mb-2 text-slate-400">Alíquota IR (%)</label>
+                            <input type="number" id="taxRate5" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-right mono" value="34" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Table -->
+                <div class="mt-6 overflow-x-auto">
+                    <h4 class="text-sm font-semibold mb-3 text-slate-400">Resumo das Projeções</h4>
+                    <table class="w-full text-sm border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-700">
+                                <th class="py-2 px-2 text-left text-slate-500">Indicador</th>
+                                <th class="py-2 px-2 text-center text-slate-500">Ano 1</th>
+                                <th class="py-2 px-2 text-center text-slate-500">Ano 2</th>
+                                <th class="py-2 px-2 text-center text-slate-500">Ano 3</th>
+                                <th class="py-2 px-2 text-center text-slate-500">Ano 4</th>
+                                <th class="py-2 px-2 text-center text-slate-500">Ano 5</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mono text-xs" id="projectionSummary">
+                            <tr class="border-b border-slate-800/50">
+                                <td class="py-2 px-2 text-slate-400">Crescimento</td>
+                                <td class="py-2 px-2 text-center text-blue-400" id="sum-growth1">-</td>
+                                <td class="py-2 px-2 text-center text-blue-400" id="sum-growth2">-</td>
+                                <td class="py-2 px-2 text-center text-blue-400" id="sum-growth3">-</td>
+                                <td class="py-2 px-2 text-center text-blue-400" id="sum-growth4">-</td>
+                                <td class="py-2 px-2 text-center text-blue-400" id="sum-growth5">-</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-2 text-slate-400">Margem EBITDA</td>
+                                <td class="py-2 px-2 text-center text-green-400" id="sum-margin1">-</td>
+                                <td class="py-2 px-2 text-center text-green-400" id="sum-margin2">-</td>
+                                <td class="py-2 px-2 text-center text-green-400" id="sum-margin3">-</td>
+                                <td class="py-2 px-2 text-center text-green-400" id="sum-margin4">-</td>
+                                <td class="py-2 px-2 text-center text-green-400" id="sum-margin5">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="mt-8 flex justify-between">
                     <button onclick="prevStep(2)" class="border border-slate-600 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-lg transition-all">
                         <i class="fas fa-arrow-left mr-2"></i>Voltar
                     </button>
-                    <button onclick="calculateValuation(); nextStep(4)" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105">
+                    <button onclick="saveProjections(); nextStep(4)" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105">
+                        Próximo: WACC <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 4: WACC -->
+        <section id="step4" class="hidden-section">
+            <div class="glass rounded-2xl p-8 mb-6">
+                <h2 class="text-3xl font-bold mb-6 gradient-text">Custo de Capital (WACC)</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-blue-400 border-b border-slate-700 pb-2">Capital Próprio (Ke)</h3>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-300">Taxa Livre de Risco (Rf) %</label>
+                            <input type="number" id="rf" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="11.75" step="0.01">
+                            <p class="text-xs text-slate-500 mt-1">Sugestão: IPCA + 6% ou taxa de títulos públicos</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-300">Prêmio de Risco de Mercado (Rm - Rf) %</label>
+                            <input type="number" id="rpm" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="6.0" step="0.01">
+                            <p class="text-xs text-slate-500 mt-1">Histórico Brasil: 5-7%</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-300">Beta (β) do Setor</label>
+                            <input type="number" id="beta" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="1.0" step="0.01">
+                            <p class="text-xs text-slate-500 mt-1">Mercado = 1.0 | Tecnologia: 1.2 | Utilidades: 0.6</p>
+                        </div>
+                        <div class="glass p-4 rounded-lg bg-blue-900/20 border-blue-500/30">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">Ke (CAPM):</span>
+                                <span class="text-2xl font-bold text-blue-400 mono" id="keResult">-</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Ke = Rf + β × (Rm - Rf)</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-purple-400 border-b border-slate-700 pb-2">Capital de Terceiros (Kd)</h3>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-300">Custo da Dívida (%) - Pré-fixada</label>
+                            <input type="number" id="kd" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="12.0" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-300">Alíquota Tributária Média (%)</label>
+                            <input type="number" id="taxShield" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="34" step="0.01">
+                            <p class="text-xs text-slate-500 mt-1">Benefício fiscal dos juros (IR)</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-300">Participação da Dívida (%)</label>
+                            <input type="number" id="debtWeight" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white" value="30" step="0.01">
+                        </div>
+                        <div class="glass p-4 rounded-lg bg-purple-900/20 border-purple-500/30">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">Kd (Líquido):</span>
+                                <span class="text-2xl font-bold text-purple-400 mono" id="kdResult">-</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Kd = Kd bruto × (1 - Taxa IR)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-xl border border-slate-700">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg text-slate-300">WACC:</span>
+                        <span class="text-3xl font-bold gradient-text mono" id="waccResult">-</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 text-center">WACC = (E/V × Ke) + (D/V × Kd × (1 - T))</p>
+                </div>
+
+                <div class="mt-6 glass p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-lg font-semibold mb-4 text-green-400">Crescimento na Perpetuidade (g)</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-300">Taxa de Crescimento Perpétuo (%)</label>
+                            <input type="number" id="growthPerpetuity" class="input-field w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500" value="3.0" step="0.01">
+                            <p class="text-xs text-slate-500 mt-1">Sugestão: 2.5% a 4% (próximo ao PIB longo prazo)</p>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="text-sm text-slate-400">
+                                <p class="mb-2"><strong>Regra importante:</strong> g deve ser menor que WACC</p>
+                                <p id="perpetuityCheck" class="text-green-400">✓ Cenário válido</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <button onclick="prevStep(3)" class="border border-slate-600 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-lg transition-all">
+                        <i class="fas fa-arrow-left mr-2"></i>Voltar
+                    </button>
+                    <button onclick="calculateWACC(); nextStep(5)" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105">
                         Calcular Valuation <i class="fas fa-calculator ml-2"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- STEP 4: Results -->
-        <section id="step4" class="hidden-section">
+        <!-- STEP 5: Results -->
+        <section id="step5" class="hidden-section">
             <div class="glass rounded-2xl p-8 mb-6">
                 <h2 class="text-3xl font-bold mb-6 gradient-text">Resultado do Valuation</h2>
                 
-                <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="grid md:grid-cols-4 gap-4 mb-8">
                     <div class="glass p-6 rounded-xl border border-slate-800 text-center">
-                        <h4 class="text-slate-400 text-sm mb-2">Enterprise Value</h4>
-                        <p class="text-3xl font-bold text-blue-400 mono" id="evResult">-</p>
+                        <h4 class="text-slate-400 text-sm mb-2">Enterprise Value (EV)</h4>
+                        <p class="text-2xl font-bold text-blue-400 mono" id="evResult">-</p>
                     </div>
                     <div class="glass p-6 rounded-xl border border-slate-800 text-center">
-                        <h4 class="text-slate-400 text-sm mb-2">Valor por Ação*</h4>
-                        <p class="text-3xl font-bold text-purple-400 mono" id="valuePerShare">-</p>
-                        <p class="text-xs text-slate-500 mt-1">*Se houver capital social definido</p>
+                        <h4 class="text-slate-400 text-sm mb-2">Valor Terminal</h4>
+                        <p class="text-2xl font-bold text-purple-400 mono" id="terminalValueResult">-</p>
                     </div>
                     <div class="glass p-6 rounded-xl border border-slate-800 text-center">
-                        <h4 class="text-slate-400 text-sm mb-2">EV/EBITDA</h4>
-                        <p class="text-3xl font-bold text-green-400 mono" id="evEbitdaMultiple">-</p>
+                        <h4 class="text-slate-400 text-sm mb-2">% do Perpétuo</h4>
+                        <p class="text-2xl font-bold text-yellow-400 mono" id="perpetuityPercent">-</p>
+                    </div>
+                    <div class="glass p-6 rounded-xl border border-slate-800 text-center">
+                        <h4 class="text-slate-400 text-sm mb-2">EV/EBITDA (Ano 5)</h4>
+                        <p class="text-2xl font-bold text-green-400 mono" id="evEbitdaMultiple">-</p>
                     </div>
                 </div>
 
-                <div class="glass p-6 rounded-xl border border-slate-800 mb-6">
-                    <h4 class="text-lg font-semibold mb-4 text-slate-300">Fluxo de Caixa Projetado (5 anos)</h4>
-                    <canvas id="fcfChart" height="100"></canvas>
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="glass p-4 rounded-xl border border-slate-800">
+                        <h4 class="text-slate-300 mb-4">Fluxo de Caixa Livre (5 anos)</h4>
+                        <canvas id="fcfChart" height="200"></canvas>
+                    </div>
+                    <div class="glass p-4 rounded-xl border border-slate-800">
+                        <h4 class="text-slate-300 mb-4">Composição do Valor</h4>
+                        <canvas id="valueChart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto mb-8">
+                    <h4 class="text-lg font-semibold mb-4 text-slate-300">Demonstrativo Completo do FCF</h4>
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-600">
+                                <th class="py-3 px-2 text-slate-400">Item</th>
+                                <th class="py-3 px-2 text-slate-400 text-right">Ano 1</th>
+                                <th class="py-3 px-2 text-slate-400 text-right">Ano 2</th>
+                                <th class="py-3 px-2 text-slate-400 text-right">Ano 3</th>
+                                <th class="py-3 px-2 text-slate-400 text-right">Ano 4</th>
+                                <th class="py-3 px-2 text-slate-400 text-right">Ano 5</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fcfTableBody" class="mono">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="glass p-6 rounded-xl border border-slate-700 mb-8">
+                    <h4 class="text-lg font-semibold mb-4 text-slate-300">Análise de Sensibilidade (EV em milhões R$)</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-center text-sm" id="sensibilityTable">
+                            <!-- Populated by JS -->
+                        </table>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-4">Linhas: WACC | Colunas: Crescimento Perpétuo</p>
                 </div>
 
                 <div class="mt-8 flex justify-between items-center">
-                    <button onclick="prevStep(3)" class="border border-slate-600 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-lg transition-all">
-                        <i class="fas fa-arrow-left mr-2"></i>Ajustar Dados
+                    <button onclick="prevStep(4)" class="border border-slate-600 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-lg transition-all">
+                        <i class="fas fa-arrow-left mr-2"></i>Ajustar Parâmetros
                     </button>
-                    <button onclick="prepareAIAnalysis(); nextStep(5)" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg shadow-green-500/25">
+                    <button onclick="prepareAIAnalysis(); nextStep(6)" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg shadow-green-500/25">
                         <i class="fas fa-robot mr-2"></i>Analisar com IA <i class="fas fa-wand-magic-sparkles ml-2"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- STEP 5: AI Analysis -->
-        <section id="step5" class="hidden-section">
+        <!-- STEP 6: AI Analysis -->
+        <section id="step6" class="hidden-section">
             <div class="grid lg:grid-cols-2 gap-6">
                 
                 <!-- Chat Interface -->
                 <div class="glass rounded-2xl p-6 border border-slate-800 flex flex-col h-[600px]">
                     <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-800">
                         <h3 class="text-xl font-bold gradient-text flex items-center gap-2">
-                            <i class="fas fa-brain"></i> Consultor IA
+                            <i class="fas fa-brain"></i> Consultor de Valuation IA
                         </h3>
                         <div class="flex gap-2">
                             <button onclick="requestAnalysis('critique')" class="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-full transition-colors border border-red-500/30">
@@ -337,14 +692,13 @@
                             <button onclick="requestAnalysis('optimize')" class="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 px-3 py-1 rounded-full transition-colors border border-blue-500/30">
                                 <i class="fas fa-chart-line mr-1"></i>Otimizar
                             </button>
-                            <button onclick="requestAnalysis('compare')" class="text-xs bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 px-3 py-1 rounded-full transition-colors border border-purple-500/30">
-                                <i class="fas fa-balance-scale mr-1"></i>Comparar
+                            <button onclick="requestAnalysis('scenarios')" class="text-xs bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 px-3 py-1 rounded-full transition-colors border border-purple-500/30">
+                                <i class="fas fa-random mr-1"></i>Cenários
                             </button>
                         </div>
                     </div>
 
                     <div id="chatContainer" class="chat-container flex-1 space-y-4 mb-4 pr-2">
-                        <!-- Mensagens aparecem aqui -->
                         <div class="chat-message bg-slate-800/50 p-4 rounded-xl border border-slate-700">
                             <div class="flex items-start gap-3">
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
@@ -352,16 +706,16 @@
                                 </div>
                                 <div>
                                     <p class="text-sm text-slate-300">
-                                        Olá! Sou seu consultor de valuation. Posso ajudar você a:
+                                        Olá! Sou seu consultor de valuation especializado. Analisarei:
                                     </p>
                                     <ul class="text-sm text-slate-400 mt-2 space-y-1 list-disc list-inside">
-                                        <li>Identificar riscos e oportunidades no modelo</li>
-                                        <li>Sugerir melhorias nas projeções</li>
-                                        <li>Comparar com benchmarks do setor</li>
-                                        <li>Explicar sensitividades e cenários</li>
+                                        <li>Qualidade das premissas históricas</li>
+                                        <li>Realismo das projeções variáveis</li>
+                                        <li>Sensibilidade aos principais drivers</li>
+                                        <li>Benchmarks com empresas do setor</li>
                                     </ul>
                                     <p class="text-sm text-slate-400 mt-2">
-                                        Clique nos botões acima ou digite sua pergunta abaixo.
+                                        Clique nos botões acima ou faça perguntas específicas.
                                     </p>
                                 </div>
                             </div>
@@ -369,7 +723,7 @@
                     </div>
 
                     <div class="relative">
-                        <input type="text" id="userInput" placeholder="Pergunte algo sobre o valuation..." 
+                        <input type="text" id="userInput" placeholder="Ex: 'O que acha do crescimento do ano 3?'..." 
                             class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-white focus:outline-none focus:border-blue-500"
                             onkeypress="if(event.key==='Enter') sendMessage()">
                         <button onclick="sendMessage()" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600 hover:bg-blue-500 rounded-lg flex items-center justify-center transition-colors">
@@ -405,7 +759,7 @@
 
                     <div class="glass rounded-2xl p-6 border border-slate-800">
                         <h3 class="text-lg font-bold mb-4 text-slate-300 flex items-center gap-2">
-                            <i class="fas fa-trophy text-green-400"></i> Oportunidades
+                            <i class="fas fa-trophy text-green-400"></i> Oportunidades de Valorização
                         </h3>
                         <div id="opportunitiesContainer" class="space-y-3">
                             <div class="text-slate-500 text-center py-4">
@@ -431,14 +785,31 @@
     <script>
         // Global State
         let currentStep = 1;
+        let historicalData = {};
+        let projections = {};
+        let wacc = 0;
+        let ke = 0;
+        let kd = 0;
         let valuationData = {};
-        let aiConfig = {
-            provider: 'openai',
-            apiKey: '',
-            model: 'gpt-4',
-            connected: false
+        let aiConfig = { provider: 'openai', apiKey: '', model: 'gpt-4', connected: false };
+        let fcfChartInstance = null;
+        let valueChartInstance = null;
+
+        // Sector reference data
+        const sectorData = {
+            tecnologia: { growth: 20, margin: 25, beta: 1.2, capex: 8, ncg: 10, dep: 5 },
+            varejo: { growth: 8, margin: 8, beta: 0.9, capex: 4, ncg: 15, dep: 4 },
+            industria: { growth: 5, margin: 15, beta: 1.0, capex: 6, ncg: 20, dep: 6 },
+            servicos: { growth: 12, margin: 18, beta: 0.8, capex: 3, ncg: 8, dep: 4 },
+            saude: { growth: 10, margin: 20, beta: 0.7, capex: 5, ncg: 25, dep: 5 },
+            financeiro: { growth: 6, margin: 30, beta: 1.1, capex: 2, ncg: 0, dep: 3 },
+            energia: { growth: 4, margin: 35, beta: 0.6, capex: 15, ncg: 5, dep: 8 },
+            alimentos: { growth: 6, margin: 12, beta: 0.5, capex: 5, ncg: 12, dep: 5 },
+            construcao: { growth: 5, margin: 10, beta: 1.3, capex: 3, ncg: 30, dep: 4 },
+            logistica: { growth: 7, margin: 14, beta: 1.0, capex: 8, ncg: 18, dep: 6 },
+            educacao: { growth: 15, margin: 18, beta: 0.9, capex: 4, ncg: 8, dep: 4 },
+            outro: { growth: 5, margin: 15, beta: 1.0, capex: 5, ncg: 15, dep: 5 }
         };
-        let chatHistory = [];
 
         // Navigation
         function nextStep(step) {
@@ -454,18 +825,27 @@
             document.getElementById(`step${step}`).classList.add('visible-section');
             document.getElementById(`step${step}-indicator`).classList.add('step-active');
             
-            document.getElementById('progressBar').style.width = `${(step-1)*25}%`;
+            document.getElementById('progressBar').style.width = `${(step-1)*20}%`;
             currentStep = step;
+
+            if (step === 2) setupHistoricalYears();
+            if (step === 4) calculateWACC();
         }
 
         function prevStep(step) {
             nextStep(step);
         }
 
+        function setupHistoricalYears() {
+            const baseYear = parseInt(document.getElementById('baseYear').value) || 2023;
+            document.getElementById('histYear1').textContent = baseYear - 2;
+            document.getElementById('histYear2').textContent = baseYear - 1;
+            document.getElementById('histYear3').textContent = baseYear;
+        }
+
         // AI Configuration
         function toggleAIConfig() {
-            const modal = document.getElementById('aiConfigModal');
-            modal.classList.toggle('hidden');
+            document.getElementById('aiConfigModal').classList.toggle('hidden');
         }
 
         function closeAIConfig() {
@@ -480,7 +860,6 @@
         function updateAIFields() {
             const provider = document.getElementById('aiProvider').value;
             const instructions = document.getElementById('apiInstructions');
-            const modelSelect = document.getElementById('aiModel');
             
             if (provider === 'openai') {
                 instructions.innerHTML = `
@@ -488,12 +867,11 @@
                     <li>Crie uma conta ou faça login</li>
                     <li>Vá em "API Keys" no menu lateral</li>
                     <li>Clique em "Create new secret key"</li>
-                    <li>Copie e cole aqui (custo ~$0.01-0.03 por análise)</li>
+                    <li>Copie e cole aqui</li>
                 `;
-                modelSelect.innerHTML = `
+                document.getElementById('aiModel').innerHTML = `
                     <option value="gpt-4">GPT-4 (Mais inteligente)</option>
-                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Mais rápido/barato)</option>
-                    <option value="gpt-4-turbo-preview">GPT-4 Turbo (Novo)</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Mais rápido)</option>
                 `;
             } else if (provider === 'anthropic') {
                 instructions.innerHTML = `
@@ -503,10 +881,9 @@
                     <li>Gere uma nova chave</li>
                     <li>Copie e cole aqui</li>
                 `;
-                modelSelect.innerHTML = `
-                    <option value="claude-3-opus-20240229">Claude 3 Opus (Melhor)</option>
-                    <option value="claude-3-sonnet-20240229">Claude 3 Sonnet (Equilibrado)</option>
-                    <option value="claude-3-haiku-20240307">Claude 3 Haiku (Rápido)</option>
+                document.getElementById('aiModel').innerHTML = `
+                    <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                    <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
                 `;
             }
         }
@@ -519,95 +896,301 @@
             
             document.getElementById('aiStatus').innerHTML = `
                 <span class="pulse-ring w-2 h-2 bg-green-500 rounded-full block"></span>
-                <span class="text-green-400">IA Conectada (${aiConfig.model})</span>
+                <span class="text-green-400">IA Conectada</span>
             `;
             
             closeAIConfig();
-            
-            // Test connection
-            testAIConnection();
+            localStorage.setItem('aiConfig', JSON.stringify(aiConfig));
         }
 
-        async function testAIConnection() {
-            try {
-                const response = await callAI('Diga apenas "Conexão estabelecida com sucesso" em português.', true);
-                console.log('AI Connected:', response);
-            } catch (e) {
-                console.error('AI Connection failed:', e);
-                alert('Erro na conexão com a IA. Verifique sua API Key.');
-                aiConfig.connected = false;
+        // Historical Data Functions
+        function autoFillHistorical() {
+            const sector = document.getElementById('sector').value || 'outro';
+            const ref = sectorData[sector];
+            const baseYear = parseInt(document.getElementById('baseYear').value) || 2023;
+            
+            // Generate realistic 3-year history with growth trend
+            const year3Revenue = 10000000; // 10M base
+            const growth = 1 + (ref.growth / 100);
+            
+            for (let i = 1; i <= 3; i++) {
+                const year = i;
+                const revenue = year3Revenue / Math.pow(growth, 3 - i);
+                const cost = revenue * (1 - ref.margin/100) * 0.85;
+                const ebitda = revenue - cost;
+                const dep = revenue * (ref.dep / 100);
+                const ebit = ebitda - dep;
+                const tax = Math.max(0, ebit * 0.34);
+                const ncg = revenue * (ref.ncg / 100) * 0.1;
+                const capex = revenue * (ref.capex / 100);
+                
+                document.getElementById(`rev${year}`).value = revenue.toFixed(2);
+                document.getElementById(`cost${year}`).value = cost.toFixed(2);
+                document.getElementById(`dep${year}`).value = dep.toFixed(2);
+                document.getElementById(`tax${year}`).value = tax.toFixed(2);
+                document.getElementById(`ncg${year}`).value = ncg.toFixed(2);
+                document.getElementById(`capex${year}`).value = capex.toFixed(2);
+            }
+            
+            calculateHistorical();
+        }
+
+        function calculateHistorical() {
+            const data = { years: [], revenue: [], ebitda: [], ebit: [], tax: [], ncg: [], capex: [], dep: [] };
+            
+            for (let i = 1; i <= 3; i++) {
+                const rev = parseFloat(document.getElementById(`rev${i}`).value) || 0;
+                const cost = parseFloat(document.getElementById(`cost${i}`).value) || 0;
+                const dep = parseFloat(document.getElementById(`dep${i}`).value) || 0;
+                const tax = parseFloat(document.getElementById(`tax${i}`).value) || 0;
+                const ncg = parseFloat(document.getElementById(`ncg${i}`).value) || 0;
+                const capex = parseFloat(document.getElementById(`capex${i}`).value) || 0;
+                
+                const ebitda = rev - cost;
+                const ebit = ebitda - dep;
+                
+                document.getElementById(`ebitda${i}`).textContent = formatCurrency(ebitda);
+                document.getElementById(`ebit${i}`).textContent = formatCurrency(ebit);
+                
+                data.years.push(i);
+                data.revenue.push(rev);
+                data.ebitda.push(ebitda);
+                data.ebit.push(ebit);
+                data.tax.push(tax);
+                data.ncg.push(ncg);
+                data.capex.push(capex);
+                data.dep.push(dep);
+            }
+            
+            // Calculate metrics
+            const cagr = Math.pow(data.revenue[2] / data.revenue[0], 0.5) - 1;
+            const avgEbitdaMargin = (data.ebitda.reduce((a, b) => a + b, 0) / data.revenue.reduce((a, b) => a + b, 0)) * 100;
+            const avgCapexRate = (data.capex.reduce((a, b) => a + b, 0) / data.revenue.reduce((a, b) => a + b, 0)) * 100;
+            
+            document.getElementById('cagrRevenue').textContent = (cagr * 100).toFixed(2) + '%';
+            document.getElementById('avgEbitdaMargin').textContent = avgEbitdaMargin.toFixed(2) + '%';
+            document.getElementById('avgCapexRate').textContent = avgCapexRate.toFixed(2) + '%';
+            
+            historicalData = data;
+        }
+
+        // Projection Functions
+        function showProjectionYear(year) {
+            // Hide all forms
+            document.querySelectorAll('.projection-form').forEach(form => {
+                form.classList.add('hidden');
+            });
+            // Show selected
+            document.getElementById(`projection-year-${year}`).classList.remove('hidden');
+            
+            // Update tabs
+            document.querySelectorAll('[id^="tab-year-"]').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('text-slate-400');
+            });
+            document.getElementById(`tab-year-${year}`).classList.add('tab-active');
+            document.getElementById(`tab-year-${year}`).classList.remove('text-slate-400');
+        }
+
+        function suggestProjections(scenario) {
+            if (!historicalData.revenue) {
+                alert('Preencha os dados históricos primeiro!');
+                return;
+            }
+            
+            const sector = document.getElementById('sector').value || 'outro';
+            const ref = sectorData[sector];
+            const lastGrowth = parseFloat(document.getElementById('cagrRevenue').textContent) || ref.growth;
+            
+            let growthRates = [];
+            
+            switch(scenario) {
+                case 'conservative':
+                    growthRates = [lastGrowth * 0.6, lastGrowth * 0.5, lastGrowth * 0.4, 4, 3];
+                    break;
+                case 'optimistic':
+                    growthRates = [lastGrowth * 1.3, lastGrowth * 1.2, lastGrowth * 1.1, 8, 5];
+                    break;
+                case 'base':
+                default:
+                    // Convergence to perpetuity growth
+                    for (let i = 1; i <= 5; i++) {
+                        const weight = i / 5;
+                        growthRates.push(lastGrowth * (1 - weight) + 3 * weight);
+                    }
+            }
+            
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`growth${i}`).value = growthRates[i-1].toFixed(2);
+                document.getElementById(`margin${i}`).value = ref.margin.toFixed(2);
+                document.getElementById(`depRate${i}`).value = ref.dep.toFixed(2);
+                document.getElementById(`ncgRate${i}`).value = ref.ncg.toFixed(2);
+                document.getElementById(`capexRate${i}`).value = ref.capex.toFixed(2);
+                
+                // Update summary
+                document.getElementById(`sum-growth${i}`).textContent = growthRates[i-1].toFixed(1) + '%';
+                document.getElementById(`sum-margin${i}`).textContent = ref.margin.toFixed(1) + '%';
             }
         }
 
-        // Valuation Calculations
-        function calculateValuation() {
-            const revenue = parseFloat(document.getElementById('currentRevenue').value) || 0;
-            const margin = parseFloat(document.getElementById('currentMargin').value) || 0;
-            const growth = parseFloat(document.getElementById('growthRate').value) || 0;
-            const capexRate = parseFloat(document.getElementById('capexRate').value) || 0;
-            const ncgRate = parseFloat(document.getElementById('ncgRate').value) || 0;
+        function saveProjections() {
+            projections = { growth: [], margin: [], depRate: [], ncgRate: [], capexRate: [], taxRate: [] };
             
+            for (let i = 1; i <= 5; i++) {
+                projections.growth.push(parseFloat(document.getElementById(`growth${i}`).value) || 0);
+                projections.margin.push(parseFloat(document.getElementById(`margin${i}`).value) || 0);
+                projections.depRate.push(parseFloat(document.getElementById(`depRate${i}`).value) || 0);
+                projections.ncgRate.push(parseFloat(document.getElementById(`ncgRate${i}`).value) || 0);
+                projections.capexRate.push(parseFloat(document.getElementById(`capexRate${i}`).value) || 0);
+                projections.taxRate.push(parseFloat(document.getElementById(`taxRate${i}`).value) || 34);
+            }
+        }
+
+        // WACC Calculation
+        function calculateWACC() {
             const rf = parseFloat(document.getElementById('rf').value) || 0;
             const rpm = parseFloat(document.getElementById('rpm').value) || 0;
             const beta = parseFloat(document.getElementById('beta').value) || 0;
-            const kd = parseFloat(document.getElementById('kd').value) || 0;
+            const kd_bruto = parseFloat(document.getElementById('kd').value) || 0;
+            const tax = parseFloat(document.getElementById('taxShield').value) || 0;
             const debtWeight = parseFloat(document.getElementById('debtWeight').value) || 0;
-            const growthPerp = parseFloat(document.getElementById('growthPerp').value) || 0;
             
-            const ke = rf + (beta * rpm);
-            const kdAfterTax = kd * (1 - 0.34);
+            ke = rf + (beta * rpm);
+            kd = kd_bruto * (1 - tax/100);
             const equityWeight = 100 - debtWeight;
-            const wacc = ((equityWeight/100) * ke) + ((debtWeight/100) * kdAfterTax);
+            wacc = ((equityWeight/100) * ke) + ((debtWeight/100) * kd);
             
-            document.getElementById('waccDisplay').textContent = wacc.toFixed(2) + '%';
+            document.getElementById('keResult').textContent = ke.toFixed(2) + '%';
+            document.getElementById('kdResult').textContent = kd.toFixed(2) + '%';
+            document.getElementById('waccResult').textContent = wacc.toFixed(2) + '%';
             
-            // Project FCF for 5 years
+            const g = parseFloat(document.getElementById('growthPerpetuity').value) || 0;
+            const check = document.getElementById('perpetuityCheck');
+            if (g >= wacc) {
+                check.textContent = '✗ Crescimento não pode ser maior ou igual ao WACC!';
+                check.className = 'text-red-400 font-bold';
+            } else {
+                check.textContent = '✓ Cenário válido';
+                check.className = 'text-green-400';
+            }
+        }
+
+        // Valuation Calculation
+        function calculateValuation() {
+            if (!historicalData.revenue) {
+                alert('Preencha os dados históricos primeiro!');
+                return;
+            }
+            
+            saveProjections();
+            
+            const lastRevenue = historicalData.revenue[2];
+            const waccDecimal = wacc / 100;
+            const g = parseFloat(document.getElementById('growthPerpetuity').value) || 3;
+            const gDecimal = g / 100;
+            
+            let revenues = [lastRevenue];
             let fcfs = [];
-            let revenues = [revenue];
             let details = [];
             
             for (let i = 0; i < 5; i++) {
-                const rev = revenues[i] * (1 + growth/100);
-                const ebitda = rev * (margin/100);
-                const dep = rev * 0.05;
+                const growth = projections.growth[i] / 100;
+                const margin = projections.margin[i] / 100;
+                const depRate = projections.depRate[i] / 100;
+                const ncgRate = projections.ncgRate[i] / 100;
+                const capexRate = projections.capexRate[i] / 100;
+                const taxRate = projections.taxRate[i] / 100;
+                
+                const revenue = revenues[i] * (1 + growth);
+                const ebitda = revenue * margin;
+                const dep = revenue * depRate;
                 const ebit = ebitda - dep;
-                const tax = ebit * 0.34;
+                const tax = Math.max(0, ebit * taxRate);
                 const nopat = ebit - tax;
-                const capex = rev * (capexRate/100);
-                const ncg = rev * (ncgRate/100) * (growth/100);
+                const ncg = revenue * ncgRate * growth;
+                const capex = revenue * capexRate;
                 const fcf = nopat + dep - capex - ncg;
                 
-                revenues.push(rev);
+                revenues.push(revenue);
                 fcfs.push(fcf);
-                details.push({rev, ebitda, fcf});
+                details.push({rev: revenue, ebitda, dep, ebit, tax, nopat, ncg, capex, fcf});
             }
             
             // Terminal Value
-            const terminalFCF = fcfs[4] * (1 + growthPerp/100);
-            const terminalValue = terminalFCF / ((wacc/100) - (growthPerp/100));
+            const terminalFCF = fcfs[4] * (1 + gDecimal);
+            const terminalValue = terminalFCF / (waccDecimal - gDecimal);
             
             // NPV
-            let npv = 0;
-            fcfs.forEach((fcf, i) => {
-                npv += fcf / Math.pow(1 + wacc/100, i+1);
-            });
-            const pvTerminal = terminalValue / Math.pow(1 + wacc/100, 5);
-            const enterpriseValue = npv + pvTerminal;
+            let npvExplicit = 0;
+            for (let i = 0; i < 5; i++) {
+                npvExplicit += fcfs[i] / Math.pow(1 + waccDecimal, i + 1);
+            }
+            const pvTerminal = terminalValue / Math.pow(1 + waccDecimal, 5);
+            const enterpriseValue = npvExplicit + pvTerminal;
             
             // Update UI
-            document.getElementById('evResult').textContent = 'R$ ' + (enterpriseValue/1000000).toFixed(2) + 'M';
-            document.getElementById('valuePerShare').textContent = 'R$ ' + ((enterpriseValue/1000000)/10).toFixed(2); // Assuming 10M shares
-            document.getElementById('evEbitdaMultiple').textContent = (enterpriseValue/details[4].ebitda).toFixed(2) + 'x';
+            document.getElementById('evResult').textContent = formatCurrency(enterpriseValue);
+            document.getElementById('terminalValueResult').textContent = formatCurrency(pvTerminal);
+            document.getElementById('perpetuityPercent').textContent = ((pvTerminal / enterpriseValue) * 100).toFixed(1) + '%';
+            document.getElementById('evEbitdaMultiple').textContent = (enterpriseValue / details[4].ebitda).toFixed(2) + 'x';
             
-            // Chart
-            const ctx = document.getElementById('fcfChart').getContext('2d');
-            new Chart(ctx, {
+            // Populate table
+            const tbody = document.getElementById('fcfTableBody');
+            tbody.innerHTML = '';
+            const rows = [
+                ['Receita', details.map(d => d.rev)],
+                ['EBITDA', details.map(d => d.ebitda)],
+                ['(-) Depreciação', details.map(d => d.dep)],
+                ['= EBIT', details.map(d => d.ebit)],
+                ['(-) IR', details.map(d => d.tax)],
+                ['= NOPAT', details.map(d => d.nopat)],
+                ['(+) Depreciação', details.map(d => d.dep)],
+                ['(-) CAPEX', details.map(d => d.capex)],
+                ['(-) Var. NCG', details.map(d => d.ncg)],
+                ['= FCF', details.map(d => d.fcf)]
+            ];
+            
+            rows.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-700/50';
+                const isTotal = row[0].includes('=');
+                tr.innerHTML = `<td class="py-2 px-2 font-medium ${isTotal ? 'text-blue-400' : 'text-slate-300'}">${row[0]}</td>`;
+                row[1].forEach(val => {
+                    tr.innerHTML += `<td class="py-2 px-2 text-right ${isTotal ? 'text-blue-400 font-semibold' : 'text-slate-400'}">${formatCurrency(val)}</td>`;
+                });
+                tbody.appendChild(tr);
+            });
+            
+            // Charts
+            updateCharts(fcfs, npvExplicit, pvTerminal);
+            
+            // Sensibility
+            generateSensibilityTable(terminalFCF, waccDecimal, gDecimal, details[4].ebitda);
+            
+            // Store data
+            valuationData = {
+                company: document.getElementById('companyName').value,
+                sector: document.getElementById('sector').value,
+                baseYear: document.getElementById('baseYear').value,
+                historical: historicalData,
+                projections: projections,
+                wacc, ke, kd, growthPerp: g,
+                fcfs, terminalValue, enterpriseValue, pvTerminal,
+                details, npvExplicit
+            };
+        }
+
+        function updateCharts(fcfs, npvExplicit, pvTerminal) {
+            const ctx1 = document.getElementById('fcfChart').getContext('2d');
+            if (fcfChartInstance) fcfChartInstance.destroy();
+            
+            fcfChartInstance = new Chart(ctx1, {
                 type: 'bar',
                 data: {
                     labels: ['Ano 1', 'Ano 2', 'Ano 3', 'Ano 4', 'Ano 5'],
                     datasets: [{
-                        label: 'FCF (R$ mil)',
-                        data: fcfs.map(f => f/1000),
+                        label: 'FCF',
+                        data: fcfs.map(f => f/1000000),
                         backgroundColor: 'rgba(102, 126, 234, 0.6)',
                         borderColor: 'rgba(102, 126, 234, 1)',
                         borderWidth: 1
@@ -618,47 +1201,76 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { 
-                            ticks: { color: '#94a3b8' },
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: v => 'R$ ' + v.toFixed(1) + 'M'
+                            },
                             grid: { color: 'rgba(148, 163, 184, 0.1)' }
                         },
-                        x: { 
-                            ticks: { color: '#94a3b8' },
-                            grid: { display: false }
-                        }
+                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
                     }
                 }
             });
             
-            // Store data
-            valuationData = {
-                company: document.getElementById('companyName').value,
-                sector: document.getElementById('sector').value,
-                revenue, margin, growth, capexRate, ncgRate,
-                wacc, ke, kd: kdAfterTax, growthPerp,
-                fcfs, terminalValue, enterpriseValue,
-                details, equityWeight, debtWeight
-            };
+            const ctx2 = document.getElementById('valueChart').getContext('2d');
+            if (valueChartInstance) valueChartInstance.destroy();
+            
+            valueChartInstance = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Período Explícito', 'Valor Terminal'],
+                    datasets: [{
+                        data: [npvExplicit, pvTerminal],
+                        backgroundColor: ['rgba(102, 126, 234, 0.8)', 'rgba(118, 75, 162, 0.8)'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8' } }
+                    }
+                }
+            });
         }
 
-        function prepareAIAnalysis() {
-            if (!aiConfig.connected) {
-                if (confirm('Você precisa configurar a API da IA primeiro. Deseja configurar agora?')) {
-                    toggleAIConfig();
-                }
-                return;
-            }
+        function generateSensibilityTable(terminalFCF, baseWacc, baseG, lastEbitda) {
+            const waccs = [baseWacc - 0.02, baseWacc - 0.01, baseWacc, baseWacc + 0.01, baseWacc + 0.02];
+            const growths = [baseG - 0.01, baseG, baseG + 0.01];
             
-            // Auto-request initial analysis
-            setTimeout(() => {
-                requestAnalysis('full');
-            }, 500);
+            const table = document.getElementById('sensibilityTable');
+            table.innerHTML = '';
+            
+            let header = '<tr><th class="p-2 border border-slate-700 bg-slate-800">WACC \\ g</th>';
+            growths.forEach(g => {
+                header += `<th class="p-2 border border-slate-700 bg-slate-800">${(g * 100).toFixed(1)}%</th>`;
+            });
+            header += '</tr>';
+            table.innerHTML += header;
+            
+            waccs.forEach(w => {
+                let row = `<tr><td class="p-2 border border-slate-700 bg-slate-800 font-semibold">${(w * 100).toFixed(1)}%</td>`;
+                growths.forEach(g => {
+                    let ev = 0;
+                    if (g < w) {
+                        const tv = terminalFCF / (w - g);
+                        ev = tv / Math.pow(1 + w, 5);
+                        for (let i = 0; i < 5; i++) {
+                            ev += valuationData.fcfs[i] / Math.pow(1 + w, i + 1);
+                        }
+                    }
+                    const multiple = ev / lastEbitda;
+                    const color = multiple < 0 ? 'text-red-400' : multiple > 15 ? 'text-green-400' : 'text-blue-400';
+                    row += `<td class="p-2 border border-slate-700 ${color}">${(ev/1000000).toFixed(1)}M</td>`;
+                });
+                row += '</tr>';
+                table.innerHTML += row;
+            });
         }
 
         // AI Integration
-        async function callAI(prompt, isTest = false) {
-            if (!aiConfig.connected && !isTest) {
-                throw new Error('IA não configurada');
-            }
+        async function callAI(prompt) {
+            if (!aiConfig.connected) throw new Error('IA não configurada');
             
             const messages = [
                 {
@@ -667,10 +1279,7 @@
                     Analise o valuation apresentado de forma crítica, profissional e construtiva.
                     Responda em português do Brasil. Seja direto, técnico mas acessível.`
                 },
-                {
-                    role: 'user',
-                    content: prompt
-                }
+                { role: 'user', content: prompt }
             ];
             
             if (aiConfig.provider === 'openai') {
@@ -695,29 +1304,6 @@
                 
                 const data = await response.json();
                 return data.choices[0].message.content;
-                
-            } else if (aiConfig.provider === 'anthropic') {
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': aiConfig.apiKey,
-                        'anthropic-version': '2023-06-01'
-                    },
-                    body: JSON.stringify({
-                        model: aiConfig.model,
-                        max_tokens: 2000,
-                        messages: messages
-                    })
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error?.message || 'Erro na API');
-                }
-                
-                const data = await response.json();
-                return data.content[0].text;
             }
             
             throw new Error('Provedor não suportado');
@@ -733,98 +1319,65 @@
             
             try {
                 let prompt = '';
-                const data = valuationData;
+                const d = valuationData;
                 
                 switch(type) {
                     case 'critique':
-                        prompt = `Critique severamente este valuation da empresa ${data.company} (setor: ${data.sector}):
+                        prompt = `Critique severamente este valuation:
                         
-                        DADOS:
-                        - Receita atual: R$ ${(data.revenue/1000000).toFixed(2)}M
-                        - Margem EBITDA: ${data.margin}%
-                        - Crescimento projetado: ${data.growth}% ao ano
-                        - WACC: ${data.wacc.toFixed(2)}%
-                        - EV calculado: R$ ${(data.enterpriseValue/1000000).toFixed(2)}M
-                        - Múltiplo EV/EBITDA: ${(data.enterpriseValue/data.details[4].ebitda).toFixed(2)}x
+                        EMPRESA: ${d.company} (Setor: ${d.sector})
                         
-                        Identifique:
-                        1. Suposições otimistas ou irreais
-                        2. Riscos não considerados
-                        3. Erros metodológicos
-                        4. Sensibilidades críticas
+                        HISTÓRICO (3 anos):
+                        - CAGR Receita: ${((Math.pow(d.historical.revenue[2]/d.historical.revenue[0], 0.5)-1)*100).toFixed(1)}%
+                        - Margem EBITDA média: ${((d.historical.ebitda.reduce((a,b)=>a+b,0)/d.historical.revenue.reduce((a,b)=>a+b,0))*100).toFixed(1)}%
                         
-                        Seja direto e crítico, mas construtivo.`;
+                        PROJEÇÕES (5 anos, VARIÁVEIS):
+                        ${d.projections.growth.map((g, i) => `Ano ${i+1}: Cresc ${g.toFixed(1)}%, Margem ${d.projections.margin[i].toFixed(1)}%`).join('\n')}
+                        
+                        WACC: ${d.wacc.toFixed(2)}% | Cresc. Perpétuo: ${d.growthPerp}%
+                        
+                        RESULTADO: EV = R$ ${(d.enterpriseValue/1000000).toFixed(2)}M
+                        
+                        Identifique falhas, otimismo excessivo, riscos não considerados.`;
                         break;
                         
                     case 'optimize':
-                        prompt = `Como otimizar este valuation da empresa ${data.company}?
+                        prompt = `Como otimizar este valuation?
                         
-                        Cenário atual: EV de R$ ${(data.enterpriseValue/1000000).toFixed(2)}M
+                        Cenário atual: EV de R$ ${(d.enterpriseValue/1000000).toFixed(2)}M
+                        
+                        Projeções atuais: ${d.projections.growth.map((g, i) => `A${i+1}:${g.toFixed(0)}%`).join(', ')}
                         
                         Sugira:
-                        1. Alavancas operacionais para aumentar valor (margem, crescimento, capital de giro)
-                        2. Estrutura de capital ótima (WACC atual: ${data.wacc.toFixed(2)}%)
+                        1. Alavancas operacionais (margem, crescimento, NCG)
+                        2. Estrutura de capital ótima (WACC atual: ${d.wacc.toFixed(2)}%)
                         3. Estratégias de criação de valor
-                        4. Cenários alternativos (bull, base, bear)
                         
-                        Quantifique o impacto de cada sugestão no valuation.`;
+                        Quantifique o impacto de cada sugestão.`;
                         break;
                         
-                    case 'compare':
-                        prompt = `Compare este valuation com benchmarks de mercado:
+                    case 'scenarios':
+                        prompt = `Análise de cenários para ${d.company}:
                         
-                        Empresa: ${data.company}
-                        Setor: ${data.sector}
-                        Múltiplo EV/EBITDA: ${(data.enterpriseValue/data.details[4].ebitda).toFixed(2)}x
-                        Crescimento: ${data.growth}%
-                        Margem: ${data.margin}%
+                        Base: EV = R$ ${(d.enterpriseValue/1000000).toFixed(2)}M
                         
-                        Forneça:
-                        1. Múltiplos médios do setor ${data.sector}
-                        2. Comparação com empresas similares
-                        3. Análise de premium/discount
-                        4. Justificativa para o múltiplo calculado`;
+                        Crie 3 cenários (Pessimista, Base, Otimista) variando:
+                        - Crescimento médio dos 5 anos
+                        - Margem EBITDA terminal
+                        - WACC
+                        
+                        Para cada cenário, calcule o novo EV e explique as premissas.`;
                         break;
-                        
-                    case 'full':
-                    default:
-                        prompt = `Análise completa de valuation:
-                        
-                        EMPRESA: ${data.company}
-                        SETOR: ${data.sector}
-                        
-                        PREMISSAS:
-                        - Receita: R$ ${(data.revenue/1000000).toFixed(2)}M
-                        - Crescimento: ${data.growth}% (5 anos)
-                        - Margem EBITDA: ${data.margin}%
-                        - CAPEX: ${data.capexRate}% da receita
-                        - NCG: ${data.ncgRate}% da receita
-                        - WACC: ${data.wacc.toFixed(2)}%
-                        - Ke: ${data.ke.toFixed(2)}% | Kd: ${data.kd.toFixed(2)}%
-                        - Crescimento perpétuo: ${data.growthPerp}%
-                        
-                        RESULTADO:
-                        - Enterprise Value: R$ ${(data.enterpriseValue/1000000).toFixed(2)}M
-                        - Valor Terminal: R$ ${(data.terminalValue/1000000).toFixed(2)}M
-                        - FCF médio: R$ ${(data.fcfs.reduce((a,b)=>a+b,0)/5/1000000).toFixed(2)}M
-                        
-                        Forneça:
-                        1. Avaliação geral da qualidade do modelo (nota 0-10)
-                        2. Principais riscos (alto/médio/baixo)
-                        3. Oportunidades de melhoria
-                        4. Fair value range (cenários pessimista, base, otimista)`;
                 }
                 
                 const response = await callAI(prompt);
                 removeMessage(loadingId);
                 addMessage('ai', response);
-                
-                // Parse insights for side panel
                 parseInsights(response, type);
                 
             } catch (error) {
                 removeMessage(loadingId);
-                addMessage('ai', `Erro: ${error.message}. Verifique sua API Key ou tente novamente.`);
+                addMessage('ai', `Erro: ${error.message}`);
             }
         }
 
@@ -839,25 +1392,16 @@
             const loadingId = addMessage('ai', '<span class="typing-indicator">Pensando</span>');
             
             try {
-                const context = `Contexto do valuation atual:
-                Empresa: ${valuationData.company || 'N/A'}
-                Setor: ${valuationData.sector || 'N/A'}
-                EV Calculado: R$ ${((valuationData.enterpriseValue || 0)/1000000).toFixed(2)}M
-                WACC: ${(valuationData.wacc || 0).toFixed(2)}%
-                
-                Pergunta do usuário: ${text}`;
-                
+                const context = `Valuation atual: ${valuationData.company}, EV R$ ${((valuationData.enterpriseValue||0)/1000000).toFixed(2)}M. ${text}`;
                 const response = await callAI(context);
                 removeMessage(loadingId);
                 addMessage('ai', response);
-                
             } catch (error) {
                 removeMessage(loadingId);
                 addMessage('ai', `Erro: ${error.message}`);
             }
         }
 
-        // Chat UI Helpers
         function addMessage(role, content) {
             const container = document.getElementById('chatContainer');
             const id = 'msg-' + Date.now();
@@ -890,31 +1434,28 @@
         }
 
         function parseInsights(text, type) {
-            // Simple parsing to populate side panels
             const insightsContainer = document.getElementById('insightsContainer');
             const risksContainer = document.getElementById('risksContainer');
             const opportunitiesContainer = document.getElementById('opportunitiesContainer');
             
-            // Clear loading states
             insightsContainer.innerHTML = '';
             risksContainer.innerHTML = '';
             opportunitiesContainer.innerHTML = '';
             
-            // Extract numbered items or bullet points
             const lines = text.split('\n').filter(l => l.trim());
             
             lines.forEach(line => {
-                if (line.match(/risco|problema|preocupação|alerta/i)) {
+                if (line.match(/risco|problema|alerta|preocupação|falha/i)) {
                     const div = document.createElement('div');
                     div.className = 'insight-card risk-high p-3 rounded-lg';
                     div.innerHTML = `<p class="text-sm text-slate-300">${line.replace(/^[0-9.-]+\s*/, '')}</p>`;
                     risksContainer.appendChild(div);
-                } else if (line.match(/oportunidade|melhoria|otimizar|aumentar|estratégia/i)) {
+                } else if (line.match(/oportunidade|melhoria|otimizar|aumentar|estratégia|sugestão/i)) {
                     const div = document.createElement('div');
                     div.className = 'insight-card risk-low p-3 rounded-lg';
                     div.innerHTML = `<p class="text-sm text-slate-300">${line.replace(/^[0-9.-]+\s*/, '')}</p>`;
                     opportunitiesContainer.appendChild(div);
-                } else if (line.match(/nota|score|avaliação|conclusão|recomendação/i)) {
+                } else if (line.match(/nota|score|conclusão|resumo|avaliação/i)) {
                     const div = document.createElement('div');
                     div.className = 'insight-card p-3 rounded-lg bg-blue-500/10 border-l-2 border-blue-500';
                     div.innerHTML = `<p class="text-sm text-slate-300">${line}</p>`;
@@ -922,12 +1463,11 @@
                 }
             });
             
-            // If no specific parsing worked, add generic cards
             if (risksContainer.children.length === 0) {
-                risksContainer.innerHTML = '<div class="text-slate-500 text-sm">Análise detalhada disponível no chat.</div>';
+                risksContainer.innerHTML = '<div class="text-slate-500 text-sm">Nenhum risco crítico identificado.</div>';
             }
             if (opportunitiesContainer.children.length === 0) {
-                opportunitiesContainer.innerHTML = '<div class="text-slate-500 text-sm">Solicite uma análise de otimização no chat.</div>';
+                opportunitiesContainer.innerHTML = '<div class="text-slate-500 text-sm">Solicite análise de otimização.</div>';
             }
         }
 
@@ -943,69 +1483,65 @@
             btn.disabled = true;
             
             try {
-                const prompt = `Gere um relatório profissional de valuation em formato estruturado:
+                const d = valuationData;
+                const prompt = `Gere relatório profissional de valuation:
                 
-                ${JSON.stringify(valuationData, null, 2)}
+                EMPRESA: ${d.company}
+                SETOR: ${d.sector}
+                DATA BASE: ${d.baseYear}
                 
-                Estrutura do relatório:
-                1. EXECUTIVE SUMMARY (2-3 parágrafos)
-                2. PREMISSAS CHAVE (tabela)
-                3. ANÁLISE DE SENSIBILIDADE
-                4. VALUATION POR MÚLTIPLOS (comparativo de mercado)
-                5. RISCOS E MITIGAÇÕES
-                6. RECOMENDAÇÃO FINAL (Comprar/Vender/Manter com target price)
+                HISTÓRICO 3 ANOS:
+                - Receita: ${d.historical.revenue.map(r => (r/1000000).toFixed(1)+'M').join(' → ')}
+                - EBITDA: ${d.historical.ebitda.map(e => (e/1000000).toFixed(1)+'M').join(' → ')}
                 
-                Formato: Markdown profissional, pronto para converter em PDF.`;
+                PROJEÇÕES 5 ANOS (VARIÁVEIS):
+                ${d.projections.growth.map((g, i) => `Ano ${i+1}: ${g.toFixed(1)}% cresc, ${d.projections.margin[i].toFixed(1)}% margem`).join('\n')}
+                
+                WACC: ${d.wacc.toFixed(2)}% | Perpétuo: ${d.growthPerp}%
+                
+                RESULTADO: EV R$ ${(d.enterpriseValue/1000000).toFixed(2)}M
+                
+                Estruture em: 1.Executive Summary 2.Premissas 3.Análise Histórica 4.Projeções 5.Sensibilidade 6.Conclusão e Recomendação`;
                 
                 const report = await callAI(prompt);
                 
-                // Download as markdown
                 const blob = new Blob([report], { type: 'text/markdown' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `Valuation_${valuationData.company.replace(/\s+/g, '_')}_IA.md`;
+                a.download = `Valuation_${d.company.replace(/\s+/g, '_')}_IA.md`;
                 a.click();
                 
-                addMessage('ai', '✅ Relatório completo gerado e baixado! O arquivo está em formato Markdown (MD). Você pode abrir no Word, Google Docs ou converter para PDF.');
+                addMessage('ai', '✅ Relatório completo gerado! Verifique sua pasta de downloads.');
                 
             } catch (error) {
-                alert('Erro ao gerar relatório: ' + error.message);
+                alert('Erro: ' + error.message);
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
 
-        function autoFillData() {
-            const sector = document.getElementById('sector').value || 'tecnologia';
-            const defaults = {
-                tecnologia: { rev: 5000000, margin: 25, growth: 20, capex: 8, ncg: 10, beta: 1.2 },
-                varejo: { rev: 10000000, margin: 8, growth: 8, capex: 4, ncg: 15, beta: 0.9 },
-                industria: { rev: 20000000, margin: 15, growth: 5, capex: 6, ncg: 20, beta: 1.0 },
-                servicos: { rev: 3000000, margin: 20, growth: 12, capex: 3, ncg: 8, beta: 0.8 },
-                saude: { rev: 8000000, margin: 22, growth: 10, capex: 5, ncg: 25, beta: 0.7 },
-                financeiro: { rev: 15000000, margin: 35, growth: 6, capex: 2, ncg: 0, beta: 1.1 },
-                energia: { rev: 50000000, margin: 40, growth: 4, capex: 15, ncg: 5, beta: 0.6 },
-                alimentos: { rev: 25000000, margin: 12, growth: 6, capex: 5, ncg: 12, beta: 0.5 },
-                construcao: { rev: 40000000, margin: 10, growth: 5, capex: 3, ncg: 30, beta: 1.3 },
-                educacao: { rev: 4000000, margin: 18, growth: 15, capex: 4, ncg: 8, beta: 0.9 },
-                logistica: { rev: 30000000, margin: 14, growth: 7, capex: 8, ncg: 18, beta: 1.0 },
-                outro: { rev: 10000000, margin: 15, growth: 8, capex: 5, ncg: 15, beta: 1.0 }
-            };
-            
-            const d = defaults[sector];
-            document.getElementById('currentRevenue').value = d.rev;
-            document.getElementById('currentMargin').value = d.margin;
-            document.getElementById('growthRate').value = d.growth;
-            document.getElementById('capexRate').value = d.capex;
-            document.getElementById('ncgRate').value = d.ncg;
-            document.getElementById('beta').value = d.beta;
+        function prepareAIAnalysis() {
+            if (!aiConfig.connected) {
+                if (confirm('Configure a IA para análise avançada. Deseja configurar agora?')) {
+                    toggleAIConfig();
+                }
+            }
+        }
+
+        // Utilities
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Check for saved API key
             const saved = localStorage.getItem('aiConfig');
             if (saved) {
                 aiConfig = JSON.parse(saved);
@@ -1016,9 +1552,13 @@
                     `;
                 }
             }
+            
+            // Auto-calculate WACC on input change
+            document.querySelectorAll('#step4 input').forEach(input => {
+                input.addEventListener('input', calculateWACC);
+            });
         });
 
-        // Save config to localStorage
         window.addEventListener('beforeunload', () => {
             if (aiConfig.apiKey) {
                 localStorage.setItem('aiConfig', JSON.stringify(aiConfig));
