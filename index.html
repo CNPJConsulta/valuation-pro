@@ -1000,7 +1000,8 @@
             
             const sector = document.getElementById('sector').value || 'outro';
             const ref = sectorData[sector];
-            const lastGrowth = parseFloat(document.getElementById('cagrRevenue').textContent) || ref.growth;
+            const histMargin = parseFloat(document.getElementById('avgEbitdaMargin').textContent) || ref.margin;
+const lastGrowth = parseFloat(document.getElementById('cagrRevenue').textContent) || ref.growth;
             
             let growthRates = [];
             
@@ -1021,14 +1022,14 @@
             }
             
             for (let i = 1; i <= 5; i++) {
-                document.getElementById(`growth${i}`).value = growthRates[i-1].toFixed(2);
+                document.getElementById(`margin${i}`).value = histMargin.toFixed(2);
                 document.getElementById(`margin${i}`).value = ref.margin.toFixed(2);
                 document.getElementById(`depRate${i}`).value = ref.dep.toFixed(2);
                 document.getElementById(`ncgRate${i}`).value = ref.ncg.toFixed(2);
                 document.getElementById(`capexRate${i}`).value = ref.capex.toFixed(2);
                 
                 // Update summary
-                document.getElementById(`sum-growth${i}`).textContent = growthRates[i-1].toFixed(1) + '%';
+                document.getElementById(`sum-margin${i}`).textContent = histMargin.toFixed(1) + '%';
                 document.getElementById(`sum-margin${i}`).textContent = ref.margin.toFixed(1) + '%';
             }
         }
